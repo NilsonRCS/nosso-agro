@@ -1,4 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { Produtor } from '../modules/produtores/entities/produtor.entity';
+import { SafraCultura } from '../modules/safras/entities/safra-cultura.entity';
 
 export const databaseConfig: TypeOrmModuleOptions = {
   type: 'postgres',
@@ -7,7 +9,9 @@ export const databaseConfig: TypeOrmModuleOptions = {
   username: process.env.DATABASE_USER || 'postgres',
   password: process.env.DATABASE_PASSWORD || 'postgres',
   database: process.env.DATABASE_NAME || 'nosso_agro',
-  entities: ['dist/**/*.entity{.ts,.js}'],
-  synchronize: process.env.NODE_ENV === 'development',
-  logging: ['error', 'warn'],
+  entities: [Produtor, SafraCultura],
+  migrations: [__dirname + '/../database/migrations/*.{js,ts}'],
+  migrationsRun: true,
+  synchronize: true,
+  logging: true,
 }; 
