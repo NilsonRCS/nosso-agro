@@ -11,15 +11,11 @@ import { Produtor } from '../../produtores/entities/produtor.entity';
 @Entity('safras_culturas')
 @Unique(['produtor_id', 'nome_safra', 'cultura_plantada'])
 export class SafraCultura {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ name: 'produtor_id' })
-  produtor_id: number;
-
-  @ManyToOne(() => Produtor, (produtor) => produtor.safras_culturas)
-  @JoinColumn({ name: 'produtor_id' })
-  produtor: Produtor;
+  @Column({ name: 'produtor_id', type: 'uuid' })
+  produtor_id: string;
 
   @Column({ type: 'varchar', length: 50 })
   nome_safra: string;
@@ -29,4 +25,8 @@ export class SafraCultura {
 
   @Column({ type: 'integer' })
   ano_safra: number;
+
+  @ManyToOne(() => Produtor, (produtor) => produtor.safras_culturas)
+  @JoinColumn({ name: 'produtor_id' })
+  produtor: Produtor;
 }

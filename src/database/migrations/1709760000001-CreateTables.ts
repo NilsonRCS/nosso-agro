@@ -1,10 +1,13 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateTables1709760000000 implements MigrationInterface {
+export class CreateTables1709760000001 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // First, enable the uuid-ossp extension if not already enabled
+    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`);
+
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS produtores (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         cpf VARCHAR(14) UNIQUE,
         cnpj VARCHAR(18) UNIQUE,
         nome_produtor VARCHAR(255) NOT NULL,
@@ -19,10 +22,12 @@ export class CreateTables1709760000000 implements MigrationInterface {
           (cpf IS NULL AND cnpj IS NOT NULL)
         )
       );
+    `);
 
+    await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS safras_culturas (
-        id SERIAL PRIMARY KEY,
-        produtor_id INTEGER NOT NULL,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        produtor_id UUID NOT NULL,
         nome_safra VARCHAR(50) NOT NULL,
         cultura_plantada VARCHAR(100) NOT NULL,
         ano_safra INTEGER NOT NULL,
@@ -33,9 +38,8 @@ export class CreateTables1709760000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-      DROP TABLE IF EXISTS safras_culturas;
-      DROP TABLE IF EXISTS produtores;
-    `);
+    await queryRunner.query(`DROP TABLE IF EXISTS safras_culturas;`);
+    await queryRunner.query(`DROP TABLE IF EXISTS produtores;`);
+    await queryRunner.query(`DROP EXTENSION IF EXISTS "uuid-ossp";`);
   }
-}
+} 

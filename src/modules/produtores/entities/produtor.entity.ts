@@ -11,8 +11,8 @@ import { SafraCultura } from '../../safras/entities/safra-cultura.entity';
 @Check(`"cpf" IS NOT NULL OR "cnpj" IS NOT NULL`)
 @Check(`NOT ("cpf" IS NOT NULL AND "cnpj" IS NOT NULL)`)
 export class Produtor {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'varchar', length: 14, nullable: true, unique: true })
   cpf: string | null;
@@ -26,7 +26,7 @@ export class Produtor {
   @Column({ type: 'varchar', length: 255 })
   nome_fazenda: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 100 })
   cidade: string;
 
   @Column({ type: 'varchar', length: 2 })

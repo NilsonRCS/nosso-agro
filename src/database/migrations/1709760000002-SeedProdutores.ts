@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SeedProdutores1709760000000 implements MigrationInterface {
+export class SeedProdutores1709760000002 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       INSERT INTO produtores (
@@ -56,4 +56,4 @@ export class SeedProdutores1709760000000 implements MigrationInterface {
       );
     `);
   }
-}
+} 

@@ -6,7 +6,7 @@ import {
   Put,
   Param,
   Delete,
-  ParseIntPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ProdutoresService } from './produtores.service';
 import { CreateProdutorDto } from './dto/create-produtor.dto';
@@ -27,20 +27,20 @@ export class ProdutoresController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Produtor> {
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Produtor> {
     return this.produtoresService.findOne(id);
   }
 
   @Put(':id')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProdutorDto: CreateProdutorDto,
   ): Promise<Produtor> {
     return this.produtoresService.update(id, updateProdutorDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.produtoresService.remove(id);
   }
 }
