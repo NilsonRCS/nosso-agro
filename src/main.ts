@@ -8,14 +8,7 @@ async function bootstrap() {
     logger: ['error', 'warn', 'debug', 'verbose'],
   });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      enableDebugMessages: true,
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe());
 
   app.useGlobalFilters(new AllExceptionsFilter());
 

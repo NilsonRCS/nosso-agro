@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ProdutoresService } from './produtores.service';
 import { CreateProdutorDto } from './dto/create-produtor.dto';
 import { Produtor } from './entities/produtor.entity';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @Controller('produtores')
+@UseGuards(JwtAuthGuard)
 export class ProdutoresController {
   constructor(private readonly produtoresService: ProdutoresService) {}
 
