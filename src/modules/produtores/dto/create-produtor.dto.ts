@@ -9,6 +9,7 @@ import {
   IsNotEmpty,
   Matches,
 } from 'class-validator';
+import { IsCPF, IsCNPJ } from '../decorators/cpf-cnpj.validator';
 
 export class CreateProdutorDto {
   @IsOptional()
@@ -16,6 +17,7 @@ export class CreateProdutorDto {
   @Matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
     message: 'CPF deve estar no formato: 000.000.000-00',
   })
+  @IsCPF()
   @ValidateIf((o: CreateProdutorDto) => !o.cnpj)
   cpf?: string;
 
@@ -24,6 +26,7 @@ export class CreateProdutorDto {
   @Matches(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, {
     message: 'CNPJ deve estar no formato: 00.000.000/0000-00',
   })
+  @IsCNPJ()
   @ValidateIf((o: CreateProdutorDto) => !o.cpf)
   cnpj?: string;
 

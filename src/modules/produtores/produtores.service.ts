@@ -2,11 +2,17 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Produtor } from './entities/produtor.entity';
 import { CreateProdutorDto } from './dto/create-produtor.dto';
+
+interface PostgresError {
+  code: string;
+  detail: string;
+}
 
 @Injectable()
 export class ProdutoresService {
@@ -16,9 +22,23 @@ export class ProdutoresService {
   ) {}
 
   async create(createProdutorDto: CreateProdutorDto): Promise<Produtor> {
+    this.validateIdentificacao(createProdutorDto);
     this.validateAreas(createProdutorDto);
     const produtor = this.produtorRepository.create(createProdutorDto);
-    return await this.produtorRepository.save(produtor);
+    
+    try {
+      return await this.produtorRepository.save(produtor);
+    } catch (error) {
+      if (this.isPostgresError(error) && error.code === '23505') {
+        if (error.detail.includes('(cpf)')) {
+          throw new ConflictException('CPF já cadastrado no sistema');
+        }
+        if (error.detail.includes('(cnpj)')) {
+          throw new ConflictException('CNPJ já cadastrado no sistema');
+        }
+      }
+      throw error;
+    }
   }
 
   async findAll(): Promise<Produtor[]> {
@@ -37,10 +57,24 @@ export class ProdutoresService {
     id: string,
     updateProdutorDto: CreateProdutorDto,
   ): Promise<Produtor> {
+    this.validateIdentificacao(updateProdutorDto);
     this.validateAreas(updateProdutorDto);
     const produtor = await this.findOne(id);
     Object.assign(produtor, updateProdutorDto);
-    return await this.produtorRepository.save(produtor);
+    
+    try {
+      return await this.produtorRepository.save(produtor);
+    } catch (error) {
+      if (this.isPostgresError(error) && error.code === '23505') {
+        if (error.detail.includes('(cpf)')) {
+          throw new ConflictException('CPF já cadastrado no sistema');
+        }
+        if (error.detail.includes('(cnpj)')) {
+          throw new ConflictException('CNPJ já cadastrado no sistema');
+        }
+      }
+      throw error;
+    }
   }
 
   async remove(id: string): Promise<void> {
@@ -64,5 +98,29 @@ export class ProdutoresService {
         'A soma das áreas agricultável e de vegetação não pode exceder a área total',
       );
     }
+  }
+
+  private validateIdentificacao(dto: CreateProdutorDto): void {
+    if (!dto.cpf && !dto.cnpj) {
+      throw new BadRequestException(
+        'É necessário fornecer pelo menos um documento de identificação (CPF ou CNPJ)',
+      );
+    }
+    if (dto.cpf && dto.cnpj) {
+      throw new BadRequestException(
+        'Não é permitido fornecer CPF e CNPJ simultaneamente',
+      );
+    }
+  }
+
+  private isPostgresError(error: unknown): error is PostgresError {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      'detail' in error &&
+      typeof (error as PostgresError).code === 'string' &&
+      typeof (error as PostgresError).detail === 'string'
+    );
   }
 }
