@@ -1,98 +1,179 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Nosso Agro API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API para gerenciamento de produtores rurais e suas safras, desenvolvida com NestJS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Funcionalidades
 
-## Description
+- ✅ Autenticação JWT
+- ✅ Documentação Swagger
+- ✅ CRUD de Produtores
+- ✅ Validação de dados
+- ✅ Banco de dados PostgreSQL
+- ✅ Docker para desenvolvimento
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Arquitetura
 
-## Project setup
+O projeto segue uma arquitetura modular baseada nos princípios do NestJS:
 
-```bash
-$ npm install
+### Padrões Utilizados
+- **Modular**: Cada funcionalidade principal é um módulo independente
+- **MVC (Model-View-Controller)**: Separação clara entre modelos (entities), controladores e serviços
+- **Repository Pattern**: Abstração da camada de dados usando TypeORM
+- **DTO Pattern**: Objetos de transferência de dados para validação e tipagem
+- **Dependency Injection**: Injeção de dependências para melhor acoplamento
+- **Guard Pattern**: Proteção de rotas usando JWT Guards
+
+### Estrutura de Camadas
+```
+└── src/
+    ├── auth/                    # Módulo de Autenticação
+    │   ├── dto/                # Data Transfer Objects
+    │   ├── guards/             # JWT Guards
+    │   ├── strategies/         # Estratégias de autenticação
+    │   ├── auth.controller.ts  # Controlador de autenticação
+    │   ├── auth.service.ts     # Serviço de autenticação
+    │   └── auth.module.ts      # Módulo de autenticação
+    │
+    ├── modules/
+    │   └── produtores/         # Módulo de Produtores
+    │       ├── dto/           # DTOs de produtores
+    │       ├── entities/      # Entidades do TypeORM
+    │       ├── produtores.controller.ts
+    │       ├── produtores.service.ts
+    │       └── produtores.module.ts
+    │
+    ├── config/                 # Configurações da aplicação
+    │   └── database.config.ts  # Configuração do banco de dados
+    │
+    └── database/              # Migrations e seeds
+        └── migrations/        # Migrations do TypeORM
 ```
 
-## Compile and run the project
+### Fluxo de Dados
+1. **Request** → Requisição HTTP recebida
+2. **Guard** → Verifica autenticação (se necessário)
+3. **Controller** → Recebe a requisição e valida DTOs
+4. **Service** → Implementa a lógica de negócio
+5. **Repository** → Interage com o banco de dados
+6. **Response** → Retorna a resposta formatada
 
+## Pré-requisitos
+
+- Docker e Docker Compose
+- Node.js 20.x
+- npm ou yarn
+
+## Configuração do Projeto
+
+1. Clone o repositório:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/NilsonRCS/nosso-agro.git
+cd nosso-agro
 ```
 
-## Run tests
-
+2. Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 ```bash
-# unit tests
-$ npm run test
+# Aplicação
+PORT=3000
+NODE_ENV=development
+JWT_SECRET=seu_segredo_jwt_aqui
 
-# e2e tests
-$ npm run test:e2e
+# Banco de dados
+DATABASE_HOST=db
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_NAME=nosso_agro
 
-# test coverage
-$ npm run test:cov
+# PostgreSQL
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=nosso_agro
 ```
 
-## Deployment
+## Executando o Projeto
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+1. Inicie os containers com Docker Compose:
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose up --build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+2. A API estará disponível em:
+- API: http://localhost:3000
+- Documentação Swagger: http://localhost:3000/api
 
-## Resources
+## Documentação da API
 
-Check out a few resources that may come in handy when working with NestJS:
+### Autenticação
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+1. Registro de Usuário:
+```bash
+POST /auth/register
+{
+  "email": "usuario@exemplo.com",
+  "password": "senha123",
+  "name": "Nome do Usuário"
+}
+```
 
-## Support
+2. Login:
+```bash
+POST /auth/login
+{
+  "email": "usuario@exemplo.com",
+  "password": "senha123"
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Endpoints Protegidos
 
-## Stay in touch
+Todos os endpoints abaixo requerem autenticação JWT. Adicione o header:
+```
+Authorization: Bearer seu_token_jwt
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### Produtores
 
-## License
+- `GET /produtores` - Lista todos os produtores
+- `GET /produtores/:id` - Busca produtor por ID
+- `POST /produtores` - Cria novo produtor
+- `PUT /produtores/:id` - Atualiza produtor
+- `DELETE /produtores/:id` - Remove produtor
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Estrutura do Projeto
+
+```
+src/
+├── auth/                 # Módulo de autenticação
+├── modules/
+│   └── produtores/      # Módulo de produtores
+├── config/              # Configurações
+└── database/            # Migrations e configurações do banco
+```
+
+## Desenvolvimento
+
+Para desenvolvimento, você pode usar os seguintes comandos:
+
+```bash
+# Modo de desenvolvimento
+npm run start:dev
+
+# Executar testes
+npm run test
+
+# Verificar cobertura de testes
+npm run test:cov
+
+# Executar linter
+npm run lint
+```
+
+## Licença
+
+Este projeto está sob a licença MIT.
+
+## Contato
+
+- Autor - [Nilson Ribeiro](https://github.com/NilsonRCS)
+- LinkedIn - [Nilson Ribeiro](https://www.linkedin.com/in/nilsonrcs/)
