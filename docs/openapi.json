@@ -1,0 +1,796 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário registrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos"
+          }
+        },
+        "summary": "Registrar novo usuário",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais inválidas"
+          }
+        },
+        "summary": "Fazer login",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/produtores": {
+      "post": {
+        "operationId": "ProdutoresController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProdutorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produtor criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Produtor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Não autorizado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo produtor",
+        "tags": [
+          "produtores"
+        ]
+      },
+      "get": {
+        "operationId": "ProdutoresController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Lista de produtores retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Produtor"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar todos os produtores",
+        "tags": [
+          "produtores"
+        ]
+      }
+    },
+    "/produtores/{id}": {
+      "get": {
+        "operationId": "ProdutoresController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produtor encontrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Produtor"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado"
+          },
+          "404": {
+            "description": "Produtor não encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Buscar produtor por ID",
+        "tags": [
+          "produtores"
+        ]
+      },
+      "put": {
+        "operationId": "ProdutoresController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProdutorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Produtor atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Produtor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Não autorizado"
+          },
+          "404": {
+            "description": "Produtor não encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Atualizar produtor",
+        "tags": [
+          "produtores"
+        ]
+      },
+      "delete": {
+        "operationId": "ProdutoresController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produtor removido com sucesso"
+          },
+          "401": {
+            "description": "Não autorizado"
+          },
+          "404": {
+            "description": "Produtor não encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Remover produtor",
+        "tags": [
+          "produtores"
+        ]
+      }
+    },
+    "/propriedades": {
+      "post": {
+        "operationId": "PropriedadesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePropriedadeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "propriedades"
+        ]
+      },
+      "get": {
+        "operationId": "PropriedadesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "propriedades"
+        ]
+      }
+    },
+    "/propriedades/{id}": {
+      "get": {
+        "operationId": "PropriedadesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "propriedades"
+        ]
+      },
+      "put": {
+        "operationId": "PropriedadesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePropriedadeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "propriedades"
+        ]
+      },
+      "delete": {
+        "operationId": "PropriedadesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "propriedades"
+        ]
+      }
+    },
+    "/safras": {
+      "post": {
+        "operationId": "SafrasController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSafraCulturaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "safras"
+        ]
+      },
+      "get": {
+        "operationId": "SafrasController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "safras"
+        ]
+      }
+    },
+    "/safras/{id}": {
+      "get": {
+        "operationId": "SafrasController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "safras"
+        ]
+      },
+      "put": {
+        "operationId": "SafrasController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSafraCulturaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "safras"
+        ]
+      },
+      "delete": {
+        "operationId": "SafrasController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "safras"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Nosso Agro API",
+    "description": "API para gerenciamento de produtores rurais e suas safras",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Endpoints de autenticação"
+    },
+    {
+      "name": "produtores",
+      "description": "Endpoints de gerenciamento de produtores"
+    },
+    {
+      "name": "propriedades",
+      "description": "Endpoints de gerenciamento de propriedades"
+    },
+    {
+      "name": "safras",
+      "description": "Endpoints de gerenciamento de safras"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email do usuário",
+            "example": "usuario@exemplo.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Senha do usuário (mínimo 6 caracteres)",
+            "example": "senha123",
+            "minLength": 6
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do usuário",
+            "example": "João Silva",
+            "minLength": 2
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "name"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email do usuário",
+            "example": "usuario@exemplo.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Senha do usuário",
+            "example": "senha123"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "CreateProdutorDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "Produtor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único do produtor",
+            "example": "f4b0951e-1a57-4464-9cfd-fa5896509869"
+          },
+          "cpf": {
+            "type": "object",
+            "description": "CPF do produtor",
+            "example": "123.456.789-00",
+            "nullable": true
+          },
+          "cnpj": {
+            "type": "object",
+            "description": "CNPJ do produtor",
+            "example": "12.345.678/0001-90",
+            "nullable": true
+          },
+          "nome_produtor": {
+            "type": "string",
+            "description": "Nome do produtor",
+            "example": "João Silva"
+          },
+          "nome_fazenda": {
+            "type": "string",
+            "description": "Nome da fazenda",
+            "example": "Fazenda Boa Esperança"
+          },
+          "cidade": {
+            "type": "string",
+            "description": "Cidade onde está localizada a fazenda",
+            "example": "Ribeirão Preto"
+          },
+          "estado": {
+            "type": "string",
+            "description": "Estado onde está localizada a fazenda",
+            "example": "SP"
+          },
+          "area_total_hectares": {
+            "type": "number",
+            "description": "Área total da fazenda em hectares",
+            "example": 1500
+          },
+          "area_agricultavel_hectares": {
+            "type": "number",
+            "description": "Área agricultável da fazenda em hectares",
+            "example": 1200
+          },
+          "area_vegetacao_hectares": {
+            "type": "number",
+            "description": "Área de vegetação da fazenda em hectares",
+            "example": 300
+          }
+        },
+        "required": [
+          "id",
+          "cpf",
+          "cnpj",
+          "nome_produtor",
+          "nome_fazenda",
+          "cidade",
+          "estado",
+          "area_total_hectares",
+          "area_agricultavel_hectares",
+          "area_vegetacao_hectares"
+        ]
+      },
+      "CreatePropriedadeDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome da propriedade rural",
+            "example": "Fazenda São João"
+          },
+          "cidade": {
+            "type": "string",
+            "description": "Cidade onde está localizada a propriedade",
+            "example": "Ribeirão Preto"
+          },
+          "estado": {
+            "type": "string",
+            "description": "Estado onde está localizada a propriedade",
+            "example": "SP"
+          },
+          "area_total_hectares": {
+            "type": "number",
+            "description": "Área total da propriedade em hectares",
+            "example": 1500
+          },
+          "area_agricultavel_hectares": {
+            "type": "number",
+            "description": "Área agricultável da propriedade em hectares",
+            "example": 1200
+          },
+          "area_vegetacao_hectares": {
+            "type": "number",
+            "description": "Área de vegetação da propriedade em hectares",
+            "example": 300
+          }
+        },
+        "required": [
+          "nome",
+          "cidade",
+          "estado",
+          "area_total_hectares",
+          "area_agricultavel_hectares",
+          "area_vegetacao_hectares"
+        ]
+      },
+      "CreateSafraCulturaDto": {
+        "type": "object",
+        "properties": {
+          "propriedade_id": {
+            "type": "string",
+            "description": "ID da propriedade onde a cultura será plantada",
+            "example": "f4b0951e-1a57-4464-9cfd-fa5896509869"
+          },
+          "nome_cultura": {
+            "type": "string",
+            "description": "Nome da cultura plantada",
+            "example": "Soja"
+          },
+          "ano_safra": {
+            "type": "number",
+            "description": "Ano da safra",
+            "example": 2024
+          },
+          "data_plantio": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data de plantio",
+            "example": "2024-01-15"
+          },
+          "data_colheita_prevista": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data prevista da colheita",
+            "example": "2024-05-15"
+          },
+          "area_plantada_hectares": {
+            "type": "number",
+            "description": "Área plantada em hectares",
+            "example": 500
+          }
+        },
+        "required": [
+          "propriedade_id",
+          "nome_cultura",
+          "ano_safra",
+          "data_plantio",
+          "data_colheita_prevista",
+          "area_plantada_hectares"
+        ]
+      }
+    }
+  }
+}

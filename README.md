@@ -2,6 +2,22 @@
 
 API para gerenciamento de produtores rurais e suas safras, desenvolvida com NestJS.
 
+## 📚 Documentação
+
+Para facilitar o entendimento do sistema, a documentação está organizada da seguinte forma:
+
+### Documentação Interativa
+- **Swagger UI**: http://localhost:3000/api - Interface interativa para testar a API
+- **OpenAPI Specification**: http://localhost:3000/api-json - Especificação completa em JSON
+
+### Documentação Técnica
+- **[Documentação da API](docs/API_DOCUMENTATION.md)** - Guia completo com exemplos práticos
+- **[Especificação OpenAPI](docs/openapi.json)** - Arquivo de especificação para ferramentas
+
+### Guias de Uso
+- **README.md** (este arquivo) - Visão geral, instalação e configuração
+- **Swagger UI** - Testes interativos e exemplos de requisições
+
 ## Funcionalidades
 
 - ✅ Autenticação JWT
@@ -144,20 +160,28 @@ O sistema implementa um robusto sistema de logging com as seguintes característ
 - Node.js 20.x
 - npm ou yarn
 
-## Configuração do Projeto
+## 🚀 Início Rápido
 
-1. Clone o repositório:
+### 1. Clonagem e Configuração
+
 ```bash
+# Clone o repositório
 git clone https://github.com/NilsonRCS/nosso-agro.git
 cd nosso-agro
+
+# Crie o arquivo .env com as configurações
+cp .env.example .env  # ou configure manualmente
 ```
 
-2. Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+### 2. Configuração do Ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
 ```bash
 # Aplicação
 PORT=3000
 NODE_ENV=development
-JWT_SECRET=seu_segredo_jwt_aqui
+JWT_SECRET=seu_segredo_jwt_super_seguro_aqui
 
 # Banco de dados
 DATABASE_HOST=db
@@ -176,136 +200,182 @@ LOG_LEVEL=info
 ENABLE_FILE_LOGS=true
 ```
 
-### Variáveis de Ambiente para Logging
+### 3. Execução
 
-- `LOG_LEVEL`: Nível de log (error, warn, info, debug, verbose)
-- `ENABLE_FILE_LOGS`: Habilita salvamento de logs em arquivos (true/false)
-
-## Executando o Projeto
-
-1. Inicie os containers com Docker Compose:
 ```bash
-docker compose up --build
+# Inicie os containers
+sudo docker compose up --build
+
+# A API estará disponível em:
+# - API: http://localhost:3000
+# - Swagger: http://localhost:3000/api
 ```
 
-2. A API estará disponível em:
-- API: http://localhost:3000
-- Documentação Swagger: http://localhost:3000/api
+## 🔧 Desenvolvimento
 
-### Acessando os Logs
+### Comandos Disponíveis
 
-Os logs ficam disponíveis em:
-
-1. **Console** (desenvolvimento):
 ```bash
+# Desenvolvimento local
+npm run start:dev
+
+# Testes
+npm run test
+npm run test:cov
+npm run test:e2e
+
+# Qualidade de código
+npm run lint
+npm run format
+
+# Build
+npm run build
+npm run start:prod
+```
+
+### Monitoramento de Logs
+
+```bash
+# Logs em tempo real
 docker compose logs -f app
-```
 
-2. **Arquivos** (produção):
-```bash
-# Logs da aplicação
-docker compose exec app cat logs/application-YYYY-MM-DD.log
-
-# Logs de erro
-docker compose exec app cat logs/error-YYYY-MM-DD.log
-```
-
-3. **Logs em tempo real**:
-```bash
-# Seguir logs em tempo real
-docker compose exec app tail -f logs/application-*.log
-```
-
-### Análise de Logs
-
-Para análise avançada dos logs estruturados, você pode usar ferramentas como:
-
-```bash
-# Filtrar logs por categoria
+# Logs por categoria
 docker compose exec app grep '"category":"AUTH"' logs/application-*.log
+docker compose exec app grep '"category":"CRUD"' logs/application-*.log
+docker compose exec app grep '"category":"PERFORMANCE"' logs/application-*.log
 
-# Contar operações por usuário
-docker compose exec app grep '"userId"' logs/application-*.log | jq '.userId' | sort | uniq -c
-
-# Monitorar performance
-docker compose exec app grep '"category":"PERFORMANCE"' logs/application-*.log | jq '.duration'
+# Análise de performance
+docker compose exec app jq '.duration' logs/application-*.log | sort -n
 ```
 
-## Documentação da API
+## 📖 Exemplos de Uso
 
 ### Autenticação
 
-1. Registro de Usuário:
 ```bash
-POST /auth/register
-{
-  "email": "usuario@exemplo.com",
-  "password": "senha123",
-  "name": "Nome do Usuário"
-}
+# Registro
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "123456", "name": "Usuário"}'
+
+# Login
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "123456"}'
 ```
 
-2. Login:
-```bash
-POST /auth/login
-{
-  "email": "usuario@exemplo.com",
-  "password": "senha123"
-}
-```
-
-### Endpoints Protegidos
-
-Todos os endpoints abaixo requerem autenticação JWT. Adicione o header:
-```
-Authorization: Bearer seu_token_jwt
-```
-
-#### Produtores
-
-- `GET /produtores` - Lista todos os produtores
-- `GET /produtores/:id` - Busca produtor por ID
-- `POST /produtores` - Cria novo produtor
-- `PUT /produtores/:id` - Atualiza produtor
-- `DELETE /produtores/:id` - Remove produtor
-
-## Estrutura do Projeto
-
-```
-src/
-├── auth/                 # Módulo de autenticação
-├── modules/
-│   └── produtores/      # Módulo de produtores
-├── config/              # Configurações (DB, Logging)
-├── services/            # Serviços globais (AuditLogger)
-├── interceptors/        # Interceptadores HTTP
-├── filters/             # Filtros de exceção
-└── database/            # Migrations e configurações do banco
-```
-
-## Desenvolvimento
-
-Para desenvolvimento, você pode usar os seguintes comandos:
+### Criação de Produtor
 
 ```bash
-# Modo de desenvolvimento
-npm run start:dev
+# Com CPF
+curl -X POST http://localhost:3000/produtores \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -d '{
+    "cpf": "123.456.789-01",
+    "nome_produtor": "João Silva",
+    "nome_fazenda": "Fazenda São João",
+    "cidade": "Ribeirão Preto",
+    "estado": "SP",
+    "area_total_hectares": 1000,
+    "area_agricultavel_hectares": 800,
+    "area_vegetacao_hectares": 200
+  }'
 
-# Executar testes
-npm run test
-
-# Verificar cobertura de testes
-npm run test:cov
-
-# Executar linter
-npm run lint
+# Com CNPJ
+curl -X POST http://localhost:3000/produtores \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -d '{
+    "cnpj": "11.222.333/0001-81",
+    "nome_produtor": "Empresa Rural LTDA",
+    "nome_fazenda": "Fazenda Corporativa",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "area_total_hectares": 2000,
+    "area_agricultavel_hectares": 1500,
+    "area_vegetacao_hectares": 500
+  }'
 ```
 
-## Licença
+## 🏗️ Estrutura do Projeto
+
+```
+nosso-agro/
+├── docs/                    # Documentação adicional
+│   ├── API_DOCUMENTATION.md  # Guia completo da API
+│   └── openapi.json          # Especificação OpenAPI
+├── src/
+│   ├── auth/                # Módulo de autenticação
+│   ├── modules/             # Módulos de negócio
+│   ├── config/              # Configurações
+│   ├── services/            # Serviços globais
+│   ├── interceptors/        # Interceptadores HTTP
+│   ├── filters/             # Filtros de exceção
+│   └── database/            # Migrations
+├── logs/                    # Logs da aplicação (gerados)
+├── docker-compose.yml       # Configuração Docker
+├── Dockerfile              # Container da aplicação
+└── README.md               # Este arquivo
+```
+
+## 🔒 Segurança
+
+- **Autenticação JWT** com tokens de 24h
+- **Criptografia bcrypt** para senhas
+- **Validação rigorosa** de entrada
+- **Mascaramento de dados** sensíveis nos logs
+- **Auditoria completa** de operações
+
+## 📊 Monitoramento
+
+O sistema inclui logging completo com:
+
+- **Auditoria de operações** (CRUD, autenticação)
+- **Métricas de performance** (tempo de resposta)
+- **Logs estruturados** em JSON
+- **Rotação automática** de arquivos
+- **Alertas de operações lentas**
+
+## 🐛 Solução de Problemas
+
+### Problemas Comuns
+
+**"Unauthorized" (401)**
+- Verificar token JWT no header Authorization
+- Confirmar se token não expirou (24h)
+
+**"CPF já cadastrado" (409)**
+- CPF/CNPJ já existe no banco
+- Usar endpoint PUT para atualizar
+
+**"Área inválida" (400)**
+- Soma agricultável + vegetação ≤ área total
+- Verificar cálculos matemáticos
+
+### Debug
+
+```bash
+# Ver todos os logs
+docker compose logs app
+
+# Logs de erro específicos
+docker compose exec app cat logs/error-*.log
+
+# Performance issues
+docker compose exec app grep '"duration"' logs/application-*.log | grep -v '"[0-9]ms"'
+```
+
+## 📝 Licença
 
 Este projeto está sob a licença MIT.
 
-## Contato
+## 👥 Contato
 
-- Autor - [Nilson Ribeiro](https://github.com/NilsonRCS)
-- LinkedIn - [Nilson Ribeiro](https://www.linkedin.com/in/nilsonrcs/)
+- **Desenvolvedor**: [Nilson Ribeiro](https://github.com/NilsonRCS)
+- **LinkedIn**: [Nilson Ribeiro](https://www.linkedin.com/in/nilsonrcs/)
+- **Repositório**: https://github.com/NilsonRCS/nosso-agro
+
+---
+
+📚 **Para mais detalhes**, consulte a [Documentação Técnica Completa](docs/API_DOCUMENTATION.md) ou acesse o [Swagger UI](http://localhost:3000/api) quando a aplicação estiver rodando.
