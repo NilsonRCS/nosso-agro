@@ -5,8 +5,8 @@ import {
   OneToMany,
   Check,
 } from 'typeorm';
-import { SafraCultura } from '../../safras/entities/safra-cultura.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Propriedade } from '../../propriedades/entities/propriedade.entity';
 
 @Entity('produtores')
 @Check(`"cpf" IS NOT NULL OR "cnpj" IS NOT NULL`)
@@ -84,6 +84,6 @@ export class Produtor {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   area_vegetacao_hectares: number;
 
-  @OneToMany(() => SafraCultura, (safraCultura) => safraCultura.produtor)
-  safras_culturas: SafraCultura[];
+  @OneToMany(() => Propriedade, (propriedade) => propriedade.produtor)
+  propriedades: Propriedade[];
 }

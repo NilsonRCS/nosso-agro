@@ -1,24 +1,28 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { ProdutoresModule } from './modules/produtores/produtores.module';
-import { SafrasModule } from './modules/safras/safras.module';
-import { databaseConfig } from './config/database.config';
-import { TerminusModule } from '@nestjs/terminus';
-import { HealthController } from './health/health.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { ProdutoresModule } from './modules/produtores/produtores.module';
+import { PropriedadesModule } from './modules/propriedades/propriedades.module';
+import { SafrasModule } from './modules/safras/safras.module';
+import { getTypeOrmConfig } from './config/typeorm.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot(databaseConfig),
-    ProdutoresModule,
-    SafrasModule,
-    TerminusModule,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: getTypeOrmConfig,
+      inject: [ConfigService],
+    }),
     AuthModule,
+    UsersModule,
+    ProdutoresModule,
+    PropriedadesModule,
+    SafrasModule,
   ],
-  controllers: [HealthController],
 })
 export class AppModule {}
