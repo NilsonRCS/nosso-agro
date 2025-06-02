@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ProdutoresService } from './produtores.service';
 import { CreateProdutorDto } from './dto/create-produtor.dto';
@@ -19,6 +20,14 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { Request } from 'express';
+
+interface AuthenticatedRequest extends Request {
+  user: {
+    id: string;
+    email: string;
+  };
+}
 
 @ApiTags('produtores')
 @ApiBearerAuth()
@@ -36,8 +45,12 @@ export class ProdutoresController {
   })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Não autorizado' })
-  create(@Body() createProdutorDto: CreateProdutorDto): Promise<Produtor> {
-    return this.produtoresService.create(createProdutorDto);
+  create(
+    @Body() createProdutorDto: CreateProdutorDto,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Produtor> {
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    return this.produtoresService.create(createProdutorDto, req.user.id, ip);
   }
 
   @Get()
@@ -48,8 +61,8 @@ export class ProdutoresController {
     type: [Produtor],
   })
   @ApiResponse({ status: 401, description: 'Não autorizado' })
-  findAll(): Promise<Produtor[]> {
-    return this.produtoresService.findAll();
+  findAll(@Req() req: AuthenticatedRequest): Promise<Produtor[]> {
+    return this.produtoresService.findAll(req.user.id);
   }
 
   @Get(':id')
@@ -61,8 +74,11 @@ export class ProdutoresController {
   })
   @ApiResponse({ status: 401, description: 'Não autorizado' })
   @ApiResponse({ status: 404, description: 'Produtor não encontrado' })
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Produtor> {
-    return this.produtoresService.findOne(id);
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Produtor> {
+    return this.produtoresService.findOne(id, req.user.id);
   }
 
   @Put(':id')
@@ -78,8 +94,10 @@ export class ProdutoresController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProdutorDto: CreateProdutorDto,
+    @Req() req: AuthenticatedRequest,
   ): Promise<Produtor> {
-    return this.produtoresService.update(id, updateProdutorDto);
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    return this.produtoresService.update(id, updateProdutorDto, req.user.id, ip);
   }
 
   @Delete(':id')
@@ -90,7 +108,11 @@ export class ProdutoresController {
   })
   @ApiResponse({ status: 401, description: 'Não autorizado' })
   @ApiResponse({ status: 404, description: 'Produtor não encontrado' })
-  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.produtoresService.remove(id);
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<void> {
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    return this.produtoresService.remove(id, req.user.id, ip);
   }
 }
