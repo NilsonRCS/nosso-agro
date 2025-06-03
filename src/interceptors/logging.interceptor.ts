@@ -8,7 +8,6 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
-
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   private readonly logger = new Logger(LoggingInterceptor.name);
@@ -20,7 +19,10 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle();
   }
 
-  private logHttpCall(context: ExecutionContext, next: CallHandler): Observable<any> {
+  private logHttpCall(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
     const response = context.switchToHttp().getResponse<Response>();
     const userAgent = request.get('User-Agent') || '';
@@ -28,8 +30,6 @@ export class LoggingInterceptor implements NestInterceptor {
 
     const startTime = Date.now();
     const requestId = this.generateRequestId();
-
-    // Log da requisição de entrada
     this.logger.log({
       message: 'HTTP Request Started',
       requestId,
@@ -37,7 +37,10 @@ export class LoggingInterceptor implements NestInterceptor {
       url,
       ip,
       userAgent,
-      body: method !== 'GET' ? this.sanitizeBody(request.body) : undefined,
+      body:
+        method !== 'GET'
+          ? this.sanitizeBody(request.body as Record<string, unknown>)
+          : undefined,
       query: Object.keys(request.query).length > 0 ? request.query : undefined,
     });
 
@@ -46,8 +49,6 @@ export class LoggingInterceptor implements NestInterceptor {
         next: (responseBody) => {
           const duration = Date.now() - startTime;
           const statusCode = response.statusCode;
-
-          // Log da resposta de sucesso
           this.logger.log({
             message: 'HTTP Request Completed',
             requestId,
@@ -58,11 +59,9 @@ export class LoggingInterceptor implements NestInterceptor {
             responseSize: this.getResponseSize(responseBody),
           });
         },
-        error: (error) => {
+        error: (error: Error) => {
           const duration = Date.now() - startTime;
           const statusCode = response.statusCode || 500;
-
-          // Log da resposta de erro
           this.logger.error({
             message: 'HTTP Request Failed',
             requestId,
@@ -82,14 +81,15 @@ export class LoggingInterceptor implements NestInterceptor {
     return Math.random().toString(36).substring(2, 15);
   }
 
-  private sanitizeBody(body: any): any {
+  private sanitizeBody(
+    body: Record<string, unknown>,
+  ): Record<string, unknown> | undefined {
     if (!body) return undefined;
 
     const sanitized = { ...body };
-    
-    // Remove campos sensíveis
+
     const sensitiveFields = ['password', 'token', 'authorization', 'secret'];
-    sensitiveFields.forEach(field => {
+    sensitiveFields.forEach((field) => {
       if (sanitized[field]) {
         sanitized[field] = '[REDACTED]';
       }
@@ -98,11 +98,11 @@ export class LoggingInterceptor implements NestInterceptor {
     return sanitized;
   }
 
-  private getResponseSize(responseBody: any): string {
+  private getResponseSize(responseBody: unknown): string {
     if (!responseBody) return '0B';
-    
+
     const size = JSON.stringify(responseBody).length;
     if (size < 1024) return `${size}B`;
     return `${(size / 1024).toFixed(2)}KB`;
   }
-} 
+}
