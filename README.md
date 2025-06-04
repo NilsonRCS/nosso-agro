@@ -374,8 +374,5 @@ Este projeto está sob a licença MIT.
 
 - **Desenvolvedor**: [Nilson Ribeiro](https://github.com/NilsonRCS)
 - **LinkedIn**: [Nilson Ribeiro](https://www.linkedin.com/in/nilsonrcs/)
-- **Repositório**: https://github.com/NilsonRCS/nosso-agro
-
----
 
 📚 **Para mais detalhes**, consulte a [Documentação Técnica Completa](docs/API_DOCUMENTATION.md) ou acesse o [Swagger UI](http://localhost:3000/api) quando a aplicação estiver rodando.
